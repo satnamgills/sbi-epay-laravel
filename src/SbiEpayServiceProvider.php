@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace SbiEpay\SbiEpay;
 
+use Illuminate\Contracts\Config\Repository;
+use Illuminate\Contracts\Container\Container;
 use Illuminate\Support\ServiceProvider;
 use SbiEpay\SbiEpay\Console\Commands\SbiEpayCommand;
 
@@ -16,7 +18,14 @@ class SbiEpayServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(__DIR__.'/../config/sbi-epay.php', 'sbi-epay');
 
-        $this->app->singleton(SbiEpay::class);
+        $this->app->singleton(SbiEpay::class, function (Container $app): SbiEpay {
+            /** @var Repository $configRepo */
+            $configRepo = $app->make('config');
+            /** @var array<string, mixed> $config */
+            $config = $configRepo->get('sbi-epay', []);
+
+            return new SbiEpay($config);
+        });
     }
 
     /**

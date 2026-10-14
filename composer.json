@@ -1,13 +1,16 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
     "name": "satnam-singh/sbi-epay",
-    "description": "",
+    "description": "Seamless and secure SBI ePay payment gateway integration for Laravel applications.",
     "keywords": [
         "laravel",
-        "satnam-singh",
-        "sbi-epay"
+        "sbi",
+        "sbi-epay",
+        "payment-gateway",
+        "india",
+        "epay"
     ],
-    "homepage": "https://github.com/satnam-singh/sbi-epay",
+    "homepage": "https://github.com/satnamgills/laravel-packages-sbi-epay",
     "license": "MIT",
     "authors": [
         {
@@ -17,8 +20,9 @@
         }
     ],
     "require": {
-        "php": "^8.3",
-        "illuminate/support": "^12.0||^13.0"
+        "php": "^8.2||^8.3||^8.4",
+        "illuminate/http": "^11.0||^12.0||^13.0",
+        "illuminate/support": "^11.0||^12.0||^13.0"
     },
     "require-dev": {
         "larastan/larastan": "^3.9",

@@ -13,7 +13,7 @@ it('returns the same instance from the container', function () {
 });
 
 it('merges the package config', function () {
-    expect(config('sbi-epay.placeholder'))->toBe('default');
+    expect(config('sbi-epay.mode'))->toBe('test');
 });
 
 it('loads the package translations', function () {
@@ -21,7 +21,7 @@ it('loads the package translations', function () {
 });
 
 it('loads the package views', function () {
-    expect(view()->exists('sbi-epay::placeholder'))->toBeTrue();
+    expect(view()->exists('sbi-epay::redirect'))->toBeTrue();
 });
 
 it('registers the artisan command', function () {

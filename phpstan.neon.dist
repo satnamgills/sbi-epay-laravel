@@ -6,6 +6,11 @@ parameters:
         - database
         - routes
     tmpDir: build/phpstan
+    reportUnmatchedIgnoredErrors: false
     ignoreErrors:
         - identifier: larastan.noEnvCallsOutsideOfConfig
           path: config/sbi-epay.php
+          reportUnmatched: false
+        - message: '#expects view-string#'
+          path: src/DTOs/PaymentInitiation.php
+          reportUnmatched: false

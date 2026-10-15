@@ -217,6 +217,7 @@ class SbiEpay
             return $this->paymentUrl;
         }
 
+        /** @var array<string, array<string, string>> $endpoints */
         $endpoints = config('sbi-epay.endpoints', [
             'test' => [
                 'payment' => 'https://test.sbiepay.sbi/secure/AggregatorHostedListener',
@@ -235,6 +236,7 @@ class SbiEpay
             return $this->verificationUrl;
         }
 
+        /** @var array<string, array<string, string>> $endpoints */
         $endpoints = config('sbi-epay.endpoints', [
             'test' => [
                 'verification' => 'https://test.sbiepay.sbi/secure/DoubleVerificationGateway',

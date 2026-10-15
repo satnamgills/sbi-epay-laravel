@@ -38,11 +38,11 @@ class PaymentRequest
             otherDetails: isset($data['other_details']) || isset($data['otherDetails'])
                 ? (string) ($data['other_details'] ?? $data['otherDetails'])
                 : 'Other',
-            multiAccountDetails: $data['multi_account_details'] ?? $data['multiAccountDetails'] ?? null,
-            operatingMode: $data['operating_mode'] ?? $data['operatingMode'] ?? null,
-            aggregatorId: $data['aggregator_id'] ?? $data['aggregatorId'] ?? null,
-            customerEmail: $data['customer_email'] ?? $data['customerEmail'] ?? null,
-            customerMobile: $data['customer_mobile'] ?? $data['customerMobile'] ?? null,
+            multiAccountDetails: ($val = $data['multi_account_details'] ?? $data['multiAccountDetails'] ?? null) !== null ? (string) $val : null,
+            operatingMode: ($val = $data['operating_mode'] ?? $data['operatingMode'] ?? null) !== null ? (string) $val : null,
+            aggregatorId: ($val = $data['aggregator_id'] ?? $data['aggregatorId'] ?? null) !== null ? (string) $val : null,
+            customerEmail: ($val = $data['customer_email'] ?? $data['customerEmail'] ?? null) !== null ? (string) $val : null,
+            customerMobile: ($val = $data['customer_mobile'] ?? $data['customerMobile'] ?? null) !== null ? (string) $val : null,
         );
     }
 

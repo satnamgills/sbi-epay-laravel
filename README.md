@@ -56,14 +56,6 @@ Publish the `sbi-epay.php` configuration file:
 php artisan vendor:publish --tag="sbi-epay-config"
 ```
 
-### (Optional) Publish Views
-
-If you want to customize the auto-submitting POST redirect view:
-
-```bash
-php artisan vendor:publish --tag="sbi-epay-views"
-```
-
 ---
 
 ## Configuration

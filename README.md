@@ -3,11 +3,14 @@
 <p align="center">
     <a href="https://packagist.org/packages/satnam-singh/sbi-epay"><img src="https://img.shields.io/packagist/v/satnam-singh/sbi-epay.svg?style=flat-square" alt="Latest Version on Packagist"></a>
     <a href="https://packagist.org/packages/satnam-singh/sbi-epay"><img src="https://img.shields.io/packagist/php-v/satnam-singh/sbi-epay.svg?style=flat-square" alt="PHP Version Support"></a>
-    <a href="https://github.com/satnamgills/sbi-epay-laravel/actions/workflows/tests.yml"><img src="https://img.shields.io/github/actions/workflow/status/satnamgills/sbi-epay-laravel/tests.yml?branch=main&label=tests&style=flat-square" alt="GitHub Tests Action Status"></a>
+    <a href="https://github.com/satnamgills/sbi-epay-laravel/actions/workflows/tests.yml"><img src="https://github.com/satnamgills/sbi-epay-laravel/actions/workflows/tests.yml/badge.svg?branch=main" alt="Tests Status"></a>
+    <a href="https://github.com/satnamgills/sbi-epay-laravel/actions/workflows/tag-and-release.yml"><img src="https://github.com/satnamgills/sbi-epay-laravel/actions/workflows/tag-and-release.yml/badge.svg?branch=main" alt="Release Workflow Status"></a>
+    <a href="https://github.com/satnamgills/sbi-epay-laravel/actions/workflows/update-changelog.yml"><img src="https://github.com/satnamgills/sbi-epay-laravel/actions/workflows/update-changelog.yml/badge.svg" alt="Changelog Workflow Status"></a>
     <a href="https://packagist.org/packages/satnam-singh/sbi-epay"><img src="https://img.shields.io/packagist/dt/satnam-singh/sbi-epay.svg?style=flat-square" alt="Total Downloads"></a>
-    <a href="https://packagist.org/packages/satnam-singh/sbi-epay"><img src="https://img.shields.io/packagist/dm/satnam-singh/sbi-epay.svg?style=flat-square" alt="Monthly Downloads"></a>
     <a href="https://github.com/satnamgills/sbi-epay-laravel"><img src="https://img.shields.io/badge/PHPStan-level%207-brightgreen.svg?style=flat-square" alt="PHPStan Level 7"></a>
     <a href="https://github.com/satnamgills/sbi-epay-laravel"><img src="https://img.shields.io/badge/type--coverage-100%25-brightgreen.svg?style=flat-square" alt="Type Coverage 100%"></a>
+    <a href="https://github.com/satnamgills/sbi-epay-laravel/network/updates"><img src="https://img.shields.io/badge/dependabot-enabled-blue.svg?logo=dependabot&style=flat-square" alt="Dependabot"></a>
+    <a href="https://github.com/sponsors/satnam-singh"><img src="https://img.shields.io/badge/sponsor-GitHub%20Sponsors-pink.svg?logo=github&style=flat-square" alt="GitHub Sponsors"></a>
     <a href="LICENSE.md"><img src="https://img.shields.io/github/license/satnamgills/sbi-epay-laravel.svg?style=flat-square" alt="License"></a>
 </p>
 

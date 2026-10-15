@@ -24,7 +24,10 @@ class PaymentInitiation implements JsonSerializable
      */
     public function redirect(): Response
     {
-        return response()->view('sbi-epay::redirect', [
+        /** @var view-string $view */
+        $view = 'sbi-epay::redirect';
+
+        return response()->view($view, [
             'initiation' => $this,
             'url' => $this->paymentUrl,
             'encryptedTrans' => $this->encryptedTrans,
@@ -40,7 +43,10 @@ class PaymentInitiation implements JsonSerializable
      */
     public function view(): View
     {
-        return \Illuminate\Support\Facades\View::make('sbi-epay::redirect', [
+        /** @var view-string $view */
+        $view = 'sbi-epay::redirect';
+
+        return \Illuminate\Support\Facades\View::make($view, [
             'initiation' => $this,
             'url' => $this->paymentUrl,
             'encryptedTrans' => $this->encryptedTrans,

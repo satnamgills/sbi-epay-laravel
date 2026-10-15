@@ -9,8 +9,8 @@
     <a href="https://github.com/satnamgills/sbi-epay-laravel"><img src="https://img.shields.io/badge/PHPStan-level%207-brightgreen.svg?style=flat-square" alt="PHPStan Level 7"></a>
     <a href="https://github.com/satnamgills/sbi-epay-laravel"><img src="https://img.shields.io/badge/type--coverage-100%25-brightgreen.svg?style=flat-square" alt="Type Coverage 100%"></a>
     <a href="https://github.com/satnamgills/sbi-epay-laravel/network/updates"><img src="https://img.shields.io/badge/dependabot-enabled-blue.svg?logo=dependabot&style=flat-square" alt="Dependabot"></a>
-    <a href="https://github.com/sponsors/satnam-singh"><img src="https://img.shields.io/badge/sponsor-GitHub%20Sponsors-pink.svg?logo=github&style=flat-square" alt="GitHub Sponsors"></a>
-    <a href="LICENSE.md"><img src="https://img.shields.io/github/license/satnamgills/sbi-epay-laravel.svg?style=flat-square" alt="License"></a>
+    <a href="https://github.com/sponsors/satnamgills"><img src="https://img.shields.io/badge/sponsor-GitHub%20Sponsors-pink.svg?logo=github&style=flat-square" alt="GitHub Sponsors"></a>
+    <a href="LICENSE.md"><img src="https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square" alt="License"></a>
 </p>
 
 A modern, fluent, and strongly-typed **SBI ePay** (State Bank of India Payment Gateway) integration package for Laravel applications.

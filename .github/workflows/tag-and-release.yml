@@ -6,7 +6,6 @@ on:
       - main
     paths-ignore:
       - 'CHANGELOG.md'
-      - '.github/workflows/update-changelog.yml'
 
 permissions:
   contents: write
@@ -15,14 +14,14 @@ jobs:
   release:
     name: Tag & Create Release
     runs-on: ubuntu-latest
-    if: "!contains(github.event.head_commit.message, '[skip ci]') && !contains(github.event.head_commit.message, 'Update CHANGELOG')"
+    if: "!contains(github.event.head_commit.message, '[skip ci]') && !contains(github.event.head_commit.message, 'chore(release)')"
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Bump version and push tag
+      - name: Determine next version and push tag
         id: tag_version
         uses: mathieudutour/github-tag-action@v6.2
         with:
@@ -30,6 +29,21 @@ jobs:
           default_bump: patch
           tag_prefix: v
           create_annotated_tag: true
+
+      - name: Update CHANGELOG.md
+        if: steps.tag_version.outputs.new_tag != ''
+        uses: stefanzweifel/changelog-updater-action@a938690fad7edf25368f37e43a1ed1b34303eb36 # v1
+        with:
+          latest-version: ${{ steps.tag_version.outputs.new_tag }}
+          release-notes: ${{ steps.tag_version.outputs.changelog }}
+
+      - name: Commit updated CHANGELOG.md
+        if: steps.tag_version.outputs.new_tag != ''
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          branch: main
+          commit_message: "chore(release): update CHANGELOG for ${{ steps.tag_version.outputs.new_tag }} [skip ci]"
+          file_pattern: CHANGELOG.md
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2

@@ -5,7 +5,6 @@
     <a href="https://packagist.org/packages/satnam-singh/sbi-epay"><img src="https://img.shields.io/packagist/php-v/satnam-singh/sbi-epay.svg?style=flat-square" alt="PHP Version Support"></a>
     <a href="https://github.com/satnamgills/sbi-epay-laravel/actions/workflows/tests.yml"><img src="https://github.com/satnamgills/sbi-epay-laravel/actions/workflows/tests.yml/badge.svg?branch=main" alt="Tests Status"></a>
     <a href="https://github.com/satnamgills/sbi-epay-laravel/actions/workflows/tag-and-release.yml"><img src="https://github.com/satnamgills/sbi-epay-laravel/actions/workflows/tag-and-release.yml/badge.svg?branch=main" alt="Release Workflow Status"></a>
-    <a href="https://github.com/satnamgills/sbi-epay-laravel/actions/workflows/update-changelog.yml"><img src="https://github.com/satnamgills/sbi-epay-laravel/actions/workflows/update-changelog.yml/badge.svg" alt="Changelog Workflow Status"></a>
     <a href="https://packagist.org/packages/satnam-singh/sbi-epay"><img src="https://img.shields.io/packagist/dt/satnam-singh/sbi-epay.svg?style=flat-square" alt="Total Downloads"></a>
     <a href="https://github.com/satnamgills/sbi-epay-laravel"><img src="https://img.shields.io/badge/PHPStan-level%207-brightgreen.svg?style=flat-square" alt="PHPStan Level 7"></a>
     <a href="https://github.com/satnamgills/sbi-epay-laravel"><img src="https://img.shields.io/badge/type--coverage-100%25-brightgreen.svg?style=flat-square" alt="Type Coverage 100%"></a>

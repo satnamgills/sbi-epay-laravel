@@ -7,7 +7,6 @@ on:
     paths-ignore:
       - 'CHANGELOG.md'
       - '.github/workflows/tag-and-release.yml'
-      - '.github/workflows/update-changelog.yml'
 
 permissions:
   contents: write

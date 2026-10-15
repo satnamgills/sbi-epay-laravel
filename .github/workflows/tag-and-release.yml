@@ -6,6 +6,8 @@ on:
       - main
     paths-ignore:
       - 'CHANGELOG.md'
+      - '.github/workflows/tag-and-release.yml'
+      - '.github/workflows/update-changelog.yml'
 
 permissions:
   contents: write
@@ -16,23 +18,31 @@ jobs:
     runs-on: ubuntu-latest
     if: "!contains(github.event.head_commit.message, '[skip ci]') && !contains(github.event.head_commit.message, 'chore(release)')"
     steps:
+      - name: Generate GitHub App Token
+        id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ vars.BOT_APP_ID }}
+          private-key: ${{ secrets.BOT_PRIVATE_KEY }}
+
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          token: ${{ steps.app-token.outputs.token }}
 
       - name: Determine next version and push tag
         id: tag_version
         uses: mathieudutour/github-tag-action@v6.2
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ steps.app-token.outputs.token }}
           default_bump: patch
           tag_prefix: v
           create_annotated_tag: true
 
       - name: Update CHANGELOG.md
         if: steps.tag_version.outputs.new_tag != ''
-        uses: stefanzweifel/changelog-updater-action@a938690fad7edf25368f37e43a1ed1b34303eb36 # v1
+        uses: stefanzweifel/changelog-updater-action@v1
         with:
           latest-version: ${{ steps.tag_version.outputs.new_tag }}
           release-notes: ${{ steps.tag_version.outputs.changelog }}
@@ -49,6 +59,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: steps.tag_version.outputs.new_tag != ''
         with:
+          token: ${{ steps.app-token.outputs.token }}
           tag_name: ${{ steps.tag_version.outputs.new_tag }}
           name: ${{ steps.tag_version.outputs.new_tag }}
           body: ${{ steps.tag_version.outputs.changelog }}

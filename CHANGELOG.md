@@ -9,7 +9,7 @@
 - Added resilient `reportUnmatchedIgnoredErrors: false` configuration to `phpstan.neon.dist`.
 - Corrected GitHub Actions CI test matrix to run on active PHP and Laravel framework versions.
 
-## [v1.0.0](https://github.com/satnamgills/laravel-packages-sbi-epay/releases/tag/v1.0.0) - 2026-10-14
+## [v1.0.0](https://github.com/satnamgills/sbi-epay-laravel/releases/tag/v1.0.0) - 2026-10-14
 
 ### Added
 - Complete SBI ePay payment gateway integration for Laravel 12+.

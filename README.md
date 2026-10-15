@@ -16,6 +16,9 @@
 
 A modern, fluent, and strongly-typed **SBI ePay** (State Bank of India Payment Gateway) integration package for Laravel applications.
 
+> [!NOTE]
+> **Disclaimer**: This is an independent, community-developed package and is **not** an official package from State Bank of India (SBI) or SBI ePay. It is neither endorsed by, affiliated with, nor maintained by State Bank of India.
+
 ---
 
 ## Highlights
@@ -305,6 +308,12 @@ Please review [our security policy](.github/SECURITY.md) on how to report securi
 
 - **Satnam Singh** ([@satnamgills](https://github.com/satnamgills))
 - [All Contributors](../../contributors)
+
+---
+
+## Disclaimer
+
+This package is an independent, custom-built open-source integration developed to assist Laravel developers integrating with the SBI ePay payment gateway. This project is **not** an official product of, nor is it endorsed, certified, or maintained by State Bank of India (SBI) or SBI ePay. All trademarks, service marks, and company names are the property of their respective owners.
 
 ---
 

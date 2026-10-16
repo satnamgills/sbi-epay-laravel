@@ -76,8 +76,8 @@ SBI_EPAY_COUNTRY=IN
 SBI_EPAY_CURRENCY=INR
 
 # Optional URL overrides
-# SBI_EPAY_PAYMENT_URL=https://test.sbiepay.sbi/secure/AggregatorHostedListener
-# SBI_EPAY_VERIFICATION_URL=https://test.sbiepay.sbi/secure/DoubleVerificationGateway
+# SBI_EPAY_PAYMENT_URL=https://test.epay.sbiuat.bank.in/secure/AggregatorHostedListener
+# SBI_EPAY_VERIFICATION_URL=https://test.epay.sbiuat.bank.in/payagg/statusQuery/getStatusQuery
 ```
 
 ---

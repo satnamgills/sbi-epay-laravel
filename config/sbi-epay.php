@@ -39,12 +39,12 @@ return [
 
     'endpoints' => [
         'test' => [
-            'payment' => 'https://test.sbiepay.sbi/secure/AggregatorHostedListener',
-            'verification' => 'https://test.sbiepay.sbi/secure/DoubleVerificationGateway',
+            'payment' => 'https://test.epay.sbiuat.bank.in/secure/AggregatorHostedListener',
+            'verification' => 'https://test.epay.sbiuat.bank.in/payagg/statusQuery/getStatusQuery',
         ],
         'live' => [
-            'payment' => 'https://www.sbiepay.sbi/secure/AggregatorHostedListener',
-            'verification' => 'https://www.sbiepay.sbi/secure/DoubleVerificationGateway',
+            'payment' => 'https://epay.sbi.bank.in/secure/AggregatorHostedListener',
+            'verification' => 'https://epay.sbi.bank.in/payagg/statusQuery/getStatusQuery',
         ],
     ],
 

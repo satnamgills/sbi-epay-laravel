@@ -220,10 +220,10 @@ class SbiEpay
         /** @var array<string, array<string, string>> $endpoints */
         $endpoints = config('sbi-epay.endpoints', [
             'test' => [
-                'payment' => 'https://test.sbiepay.sbi/secure/AggregatorHostedListener',
+                'payment' => 'https://test.epay.sbiuat.bank.in/secure/AggregatorHostedListener',
             ],
             'live' => [
-                'payment' => 'https://www.sbiepay.sbi/secure/AggregatorHostedListener',
+                'payment' => 'https://epay.sbi.bank.in/secure/AggregatorHostedListener',
             ],
         ]);
 
@@ -239,10 +239,10 @@ class SbiEpay
         /** @var array<string, array<string, string>> $endpoints */
         $endpoints = config('sbi-epay.endpoints', [
             'test' => [
-                'verification' => 'https://test.sbiepay.sbi/secure/DoubleVerificationGateway',
+                'verification' => 'https://test.epay.sbiuat.bank.in/payagg/statusQuery/getStatusQuery',
             ],
             'live' => [
-                'verification' => 'https://www.sbiepay.sbi/secure/DoubleVerificationGateway',
+                'verification' => 'https://epay.sbi.bank.in/payagg/statusQuery/getStatusQuery',
             ],
         ]);
 

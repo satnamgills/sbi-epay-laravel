@@ -1,6 +1,6 @@
 # Release Notes
 
-## [Unreleased](https://github.com/satnamgills/sbi-epay-laravel/compare/v1.0.9...HEAD)
+## [Unreleased](https://github.com/satnamgills/sbi-epay-laravel/compare/v1.0.10...HEAD)
 
 ## [v1.0.1](https://github.com/satnamgills/sbi-epay-laravel/compare/v1.0.0...v1.0.1) - 2026-10-15
 
@@ -9,6 +9,18 @@
 - Fixed PHPStan static analysis check for package view string inference in `PaymentInitiation`.
 - Added resilient `reportUnmatchedIgnoredErrors: false` configuration to `phpstan.neon.dist`.
 - Corrected GitHub Actions CI test matrix to run on active PHP and Laravel framework versions.
+
+## [v1.0.10](https://github.com/satnamgills/sbi-epay-laravel/compare/v1.0.9...v1.0.10) - 2026-10-16
+
+### [1.0.10](https://github.com/satnamgills/sbi-epay-laravel/compare/v1.0.9...v1.0.10) (2026-10-16)
+
+### Bug Fixes
+
+* update payment and verification endpoints for test and live modes ([eb2a641](https://github.com/satnamgills/sbi-epay-laravel/commit/eb2a641c64816f10b57705aa8308641e3ddd6510))
+
+### Documentation
+
+* update example payment and verification URLs in README ([506e0a6](https://github.com/satnamgills/sbi-epay-laravel/commit/506e0a62618657a08fd6eef26a9cd099f3d3eeeb))
 
 ## [v1.0.9](https://github.com/satnamgills/sbi-epay-laravel/compare/v1.0.8...v1.0.9) - 2026-10-15
 

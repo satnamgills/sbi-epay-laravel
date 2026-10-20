@@ -48,7 +48,7 @@ jobs:
 
       - name: Commit updated CHANGELOG.md
         if: steps.tag_version.outputs.new_tag != ''
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@v7
         with:
           branch: main
           commit_message: "chore(release): update CHANGELOG for ${{ steps.tag_version.outputs.new_tag }} [skip ci]"

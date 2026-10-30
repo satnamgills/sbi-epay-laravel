@@ -23,6 +23,8 @@ A modern, fluent, and strongly-typed **SBI ePay** (State Bank of India Payment G
 ## Highlights
 
 - ⚡ **Fluent Payment Initiation**: One-liner payment generation with auto-submitting redirect form or headless API responses for SPAs.
+- 🏦 **Bank Account Routing**: Route payments to specific mapped bank accounts on your SBI ePay dashboard via `accountIdentifier`.
+- 📋 **Custom User Details**: Attach arbitrary key-value user metadata arrays with automatic SBI character sanitization and round-trip callback extraction.
 - 🔐 **AES-128-CBC Encryption**: Compliant with official SBI ePay specifications using PHP's native OpenSSL.
 - 🛡️ **Double Verification Support**: Built-in server-to-server query verification to prevent client tampering and guarantee authentic bank status.
 - 🏢 **Multi-Merchant / Multi-Tenant Support**: Seamlessly switch merchant credentials dynamically using `SbiEpay::merchant($id, $key)`.
@@ -120,7 +122,15 @@ class CheckoutController extends Controller
             amount: 1500.00,
             successUrl: route('payment.sbi.callback'),
             failUrl: route('payment.sbi.callback'),
-            otherDetails: 'Order Payment #1024',
+            // Bank account unique identifier mapped in your SBI ePay dashboard
+            accountIdentifier: 'MUNICIPALITY_COLLECTION_ACC',
+            // Send arbitrary key-value user details (auto-sanitized and encoded)
+            userDetails: [
+                'consumer_id' => 'CNS98452',
+                'consumer_name' => 'John Doe',
+                'ward_no' => '14',
+                'bill_month' => 'October 2026',
+            ],
             customerEmail: 'customer@example.com',
             customerMobile: '9876543210',
         ));
@@ -193,11 +203,16 @@ $response->isPending();           // bool: true if status is PENDING/AWAITED
 $response->orderId;               // string: your original order ID
 $response->status;                // string: 'SUCCESS', 'FAIL', etc.
 $response->amount;                // float: paid amount
+$response->currency;              // ?string: 'INR'
+$response->paymode;               // ?string: 'NB', 'CC', 'DC', etc.
 $response->sbiTransactionId;      // ?string: SBI reference ID
 $response->bankReferenceNo;       // ?string: Bank reference number
 $response->bankName;              // ?string: Paying bank name (e.g. State Bank of India)
 $response->transactionDate;       // ?string: Transaction timestamp
+$response->otherDetails;          // ?string: Raw other details string
+$response->userDetails;           // array<string, string>: Parsed key-value user details
 $response->merchantId;            // ?string: SBI merchant ID
+$response->cin;                   // ?string: Challan Identification Number (if applicable)
 $response->rawResponse;           // string: raw pipe-delimited decrypted string
 $response->toArray();             // array<string, mixed>
 ```

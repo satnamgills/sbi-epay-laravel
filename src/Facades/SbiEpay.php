@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Facade;
  * @method static \SbiEpay\SbiEpay\DTOs\PaymentResponse handleCallback(?string $encData)
  * @method static \SbiEpay\SbiEpay\DTOs\VerificationResponse verify(string $orderId, float|int|string $amount)
  * @method static \SbiEpay\SbiEpay\SbiEpay merchant(string $merchantId, string $merchantKey)
+ * @method static \SbiEpay\SbiEpay\SbiEpay account(?string $accountIdentifier)
+ * @method static ?string getAccountIdentifier()
  * @method static \SbiEpay\SbiEpay\SbiEpay mode(string $mode)
  * @method static string encrypt(string $plainText, ?string $key = null)
  * @method static string decrypt(string $cipherText, ?string $key = null)

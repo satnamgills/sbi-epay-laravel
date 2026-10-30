@@ -10,6 +10,7 @@ class VerificationResponse implements JsonSerializable
 {
     /**
      * @param  array<int, string>  $tokens
+     * @param  array<string, mixed>  $userDetails
      */
     public function __construct(
         public string $orderId,
@@ -18,7 +19,14 @@ class VerificationResponse implements JsonSerializable
         public ?string $sbiTransactionId,
         public string $rawResponse,
         public array $tokens = [],
-    ) {}
+        public ?string $otherDetails = null,
+        public array $userDetails = [],
+        public ?string $message = null,
+    ) {
+        if (empty($this->userDetails) && ! empty($this->otherDetails)) {
+            $this->userDetails = PaymentResponse::parseUserDetails($this->otherDetails);
+        }
+    }
 
     /**
      * Parse verification response string.
@@ -28,17 +36,30 @@ class VerificationResponse implements JsonSerializable
         $raw = trim($responseString);
         $tokens = explode('|', $raw);
 
-        $orderId = trim($tokens[0]);
-        $status = strtoupper(trim($tokens[1] ?? 'UNKNOWN'));
-        $amount = isset($tokens[2]) && is_numeric($tokens[2]) ? (float) $tokens[2] : $queryAmount;
-        $sbiRef = isset($tokens[3]) && $tokens[3] !== '' ? trim($tokens[3]) : null;
-
-        // In some formats, status might be 'SUCCESS' or 'SUCCESSFUL'
-        if (str_contains(strtoupper($raw), 'SUCCESS')) {
-            if ($status === 'UNKNOWN') {
-                $status = 'SUCCESS';
-            }
+        // Check if response matches official SBI ePay Double Verification format (Pages 16-17):
+        // atrn|status|country|currency|otherDetails|merchOrderno|amount|message...
+        if (isset($tokens[5], $tokens[6]) && is_numeric($tokens[6])) {
+            $sbiRef = $tokens[0] !== '' ? trim($tokens[0]) : null;
+            $status = strtoupper(trim($tokens[1]));
+            $otherDetails = $tokens[4] !== '' ? trim($tokens[4]) : null;
+            $orderId = trim($tokens[5]);
+            $amount = (float) $tokens[6];
+            $message = isset($tokens[7]) && $tokens[7] !== '' ? trim($tokens[7]) : null;
+        } else {
+            // Legacy / alternate format: orderId|status|amount|sbiRef...
+            $orderId = trim($tokens[0]);
+            $status = strtoupper(trim($tokens[1] ?? 'UNKNOWN'));
+            $amount = isset($tokens[2]) && is_numeric($tokens[2]) ? (float) $tokens[2] : $queryAmount;
+            $sbiRef = isset($tokens[3]) && $tokens[3] !== '' ? trim($tokens[3]) : null;
+            $otherDetails = null;
+            $message = null;
         }
+
+        if (str_contains(strtoupper($raw), 'SUCCESS') && $status === 'UNKNOWN') {
+            $status = 'SUCCESS';
+        }
+
+        $userDetails = PaymentResponse::parseUserDetails($otherDetails);
 
         return new self(
             orderId: $orderId ?: $queryOrderId,
@@ -47,6 +68,9 @@ class VerificationResponse implements JsonSerializable
             sbiTransactionId: $sbiRef,
             rawResponse: $raw,
             tokens: $tokens,
+            otherDetails: $otherDetails,
+            userDetails: $userDetails,
+            message: $message,
         );
     }
 
@@ -66,6 +90,9 @@ class VerificationResponse implements JsonSerializable
             'is_success' => $this->isSuccess(),
             'amount' => $this->amount,
             'sbi_transaction_id' => $this->sbiTransactionId,
+            'other_details' => $this->otherDetails,
+            'user_details' => $this->userDetails,
+            'message' => $this->message,
             'raw_response' => $this->rawResponse,
         ];
     }

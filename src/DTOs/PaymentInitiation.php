@@ -17,6 +17,7 @@ class PaymentInitiation implements JsonSerializable
         public string $encryptedTrans,
         public ?string $encryptedMultiAccount,
         public string $merchantId,
+        public ?string $accountIdentifier = null,
     ) {}
 
     /**
@@ -84,6 +85,7 @@ class PaymentInitiation implements JsonSerializable
             'encrypted_trans' => $this->encryptedTrans,
             'encrypted_multi_account' => $this->encryptedMultiAccount,
             'merchant_id' => $this->merchantId,
+            'account_identifier' => $this->accountIdentifier,
             'form_data' => $this->formData(),
         ];
     }

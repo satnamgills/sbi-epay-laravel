@@ -37,6 +37,8 @@ class SbiEpay
 
     protected string $currency;
 
+    protected ?string $accountIdentifier;
+
     /**
      * @param  array<string, mixed>  $config
      */
@@ -52,6 +54,7 @@ class SbiEpay
         $this->operatingMode = (string) ($config['operating_mode'] ?? config('sbi-epay.operating_mode', '2'));
         $this->country = (string) ($config['country'] ?? config('sbi-epay.country', 'IN'));
         $this->currency = (string) ($config['currency'] ?? config('sbi-epay.currency', 'INR'));
+        $this->accountIdentifier = $config['account_identifier'] ?? config('sbi-epay.account_identifier');
     }
 
     /**
@@ -64,6 +67,22 @@ class SbiEpay
         $clone->merchantKey = $merchantKey;
 
         return $clone;
+    }
+
+    /**
+     * Set dynamic bank account unique identifier fluently for routing.
+     */
+    public function account(?string $accountIdentifier): self
+    {
+        $clone = clone $this;
+        $clone->accountIdentifier = $accountIdentifier;
+
+        return $clone;
+    }
+
+    public function getAccountIdentifier(): ?string
+    {
+        return $this->accountIdentifier;
     }
 
     /**
@@ -101,10 +120,13 @@ class SbiEpay
 
         $encryptedTrans = $this->encDec->encrypt($pipePayload, $merchantKey);
 
+        $multiAccountPayload = $request->getMultiAccountDetails($this->currency)
+            ?? ($this->accountIdentifier ? sprintf('%.2f|%s|%s', $request->amount, $this->currency, $this->accountIdentifier) : null);
+
         $encryptedMultiAccount = null;
 
-        if (! empty($request->multiAccountDetails)) {
-            $encryptedMultiAccount = $this->encDec->encrypt($request->multiAccountDetails, $merchantKey);
+        if (! empty($multiAccountPayload)) {
+            $encryptedMultiAccount = $this->encDec->encrypt($multiAccountPayload, $merchantKey);
         }
 
         return new PaymentInitiation(
@@ -114,6 +136,7 @@ class SbiEpay
             encryptedTrans: $encryptedTrans,
             encryptedMultiAccount: $encryptedMultiAccount,
             merchantId: $merchantId,
+            accountIdentifier: $request->accountIdentifier ?: $this->accountIdentifier,
         );
     }
 

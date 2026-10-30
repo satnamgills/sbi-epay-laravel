@@ -57,8 +57,9 @@ return [
     |
     */
     'aggregator_id' => env('SBI_EPAY_AGGREGATOR_ID', 'SBIEPAY'),
-    'operating_mode' => env('SBI_EPAY_OPERATING_MODE', '2'),
+    'operating_mode' => env('SBI_EPAY_OPERATING_MODE', 'DOM'),
     'country' => env('SBI_EPAY_COUNTRY', 'IN'),
     'currency' => env('SBI_EPAY_CURRENCY', 'INR'),
+    'account_identifier' => env('SBI_EPAY_ACCOUNT_IDENTIFIER', ''),
 
 ];

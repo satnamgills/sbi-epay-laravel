@@ -85,3 +85,57 @@ it('allows dynamic merchant credentials overriding', function () {
     expect($custom->getMerchantId())->toBe('9999999')
         ->and($custom->getMerchantKey())->toBe('abcdefabcdefabcd');
 });
+
+it('initiates payment with account_identifier and user_details array', function () {
+    $initiation = SbiEpay::initiate(new PaymentRequest(
+        orderId: 'ORD_MULTI_1',
+        amount: 1500.00,
+        successUrl: 'https://app.test/pay/success',
+        failUrl: 'https://app.test/pay/fail',
+        accountIdentifier: 'MUNICIPALITY_COLLECTION_ACC',
+        userDetails: [
+            'consumer_id' => 'CNS101',
+            'ward' => '4B',
+        ],
+    ));
+
+    expect($initiation->accountIdentifier)->toBe('MUNICIPALITY_COLLECTION_ACC')
+        ->and($initiation->encryptedMultiAccount)->toBeString();
+
+    $decryptedMulti = SbiEpay::decrypt($initiation->encryptedMultiAccount);
+    expect($decryptedMulti)->toBe('1500.00|INR|MUNICIPALITY_COLLECTION_ACC');
+
+    $decryptedTrans = SbiEpay::decrypt($initiation->encryptedTrans);
+    expect($decryptedTrans)->toContain('consumer_id:CNS101/ward:4B');
+});
+
+it('allows fluent account configuration overriding', function () {
+    $custom = SbiEpay::account('WATER_DEPT_ACCOUNT');
+
+    expect($custom->getAccountIdentifier())->toBe('WATER_DEPT_ACCOUNT');
+});
+
+it('verifies transaction using official SBI ePay double verification format', function () {
+    $verificationUrl = SbiEpay::getVerificationUrl();
+
+    // Official SBI manual sample from Page 17:
+    // encData=5963046646141|SUCCESS|IN|INR|Other|Dgr9U|2|Completed Successfully|SBI |IG00FMKEX5|2014-11-20 12:23:23|IMPS|10000032015020365454 ||||||||||
+    $officialResponse = '5963046646141|SUCCESS|IN|INR|dept:PropertyTax/bill:2026|ORD_OFFICIAL_1|2500.00|Completed Successfully|SBI|IG00FMKEX5|2014-11-20 12:23:23|IMPS|10000032015020365454';
+
+    Http::fake([
+        $verificationUrl => Http::response($officialResponse, 200),
+    ]);
+
+    $verification = SbiEpay::verify('ORD_OFFICIAL_1', 2500.00);
+
+    expect($verification->isSuccess())->toBeTrue()
+        ->and($verification->orderId)->toBe('ORD_OFFICIAL_1')
+        ->and($verification->sbiTransactionId)->toBe('5963046646141')
+        ->and($verification->amount)->toBe(2500.00)
+        ->and($verification->status)->toBe('SUCCESS')
+        ->and($verification->otherDetails)->toBe('dept:PropertyTax/bill:2026')
+        ->and($verification->userDetails)->toBe([
+            'dept' => 'PropertyTax',
+            'bill' => '2026',
+        ]);
+});

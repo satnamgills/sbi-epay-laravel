@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Http;
 use SbiEpay\SbiEpay\DTOs\PaymentRequest;
+use SbiEpay\SbiEpay\DTOs\PaymentResponse;
 use SbiEpay\SbiEpay\Facades\SbiEpay;
 
 beforeEach(function () {
@@ -138,4 +139,107 @@ it('verifies transaction using official SBI ePay double verification format', fu
             'dept' => 'PropertyTax',
             'bill' => '2026',
         ]);
+});
+
+it('verifies transaction using live SBI ePay double verification format with merchantId at token 0', function () {
+    $verificationUrl = SbiEpay::getVerificationUrl();
+
+    $liveSuccess = '1003947|2011578958428|SUCCESS|IN|INR|dept:Tax/bill:10|1234L6TDVXXB54|100.00|Completed Successfully|SBI|IG00FMKEX5|2026-10-30 12:00:00|NB|SBIEPAY|1003947|0.00^0.00';
+
+    Http::fake([
+        $verificationUrl => Http::response($liveSuccess, 200),
+    ]);
+
+    $verification = SbiEpay::verify('1234L6TDVXXB54', 100.00);
+
+    expect($verification->isSuccess())->toBeTrue()
+        ->and($verification->orderId)->toBe('1234L6TDVXXB54')
+        ->and($verification->merchantId)->toBe('1003947')
+        ->and($verification->sbiTransactionId)->toBe('2011578958428')
+        ->and($verification->status)->toBe('SUCCESS')
+        ->and($verification->amount)->toBe(100.00)
+        ->and($verification->message)->toBe('Completed Successfully')
+        ->and($verification->otherDetails)->toBe('dept:Tax/bill:10')
+        ->and($verification->userDetails)->toBe(['dept' => 'Tax', 'bill' => '10']);
+});
+
+it('handles live SBI ePay No Records Found response gracefully', function () {
+    $verificationUrl = SbiEpay::getVerificationUrl();
+
+    $liveNoRecord = '1003947|NA|No Records Found|NA|NA|NA|1234L6TDVXXB54|NA|No Records Found|NA|NA|NA|NA|NA|1003947|0.00^0.00';
+
+    Http::fake([
+        $verificationUrl => Http::response($liveNoRecord, 200),
+    ]);
+
+    $verification = SbiEpay::verify('1234L6TDVXXB54', 100.00);
+
+    expect($verification->isSuccess())->toBeFalse()
+        ->and($verification->orderId)->toBe('1234L6TDVXXB54')
+        ->and($verification->status)->toBe('NO RECORDS FOUND')
+        ->and($verification->sbiTransactionId)->toBeNull()
+        ->and($verification->message)->toBe('No Records Found');
+});
+
+it('verifies using a PaymentResponse instance directly', function () {
+    $verificationUrl = SbiEpay::getVerificationUrl();
+
+    $liveSuccess = '1003947|2011578958428|SUCCESS|IN|INR|dept:Tax/bill:10|1234L6TDVXXB54|100.00|Completed Successfully|SBI|IG00FMKEX5|2026-10-30 12:00:00|NB|SBIEPAY|1003947|0.00^0.00';
+
+    Http::fake([
+        $verificationUrl => Http::response($liveSuccess, 200),
+    ]);
+
+    // Create PaymentResponse (as returned by SbiEpay::handleCallback)
+    $paymentResponse = new PaymentResponse(
+        orderId: '1234L6TDVXXB54',
+        status: 'SUCCESS',
+        amount: 100.00,
+        sbiTransactionId: '2011578958428',
+        bankReferenceNo: 'IG00FMKEX5',
+        bankName: 'SBI',
+        transactionDate: '2026-10-30 12:00:00',
+        merchantId: '1003947',
+        rawResponse: '...',
+    );
+
+    $verification = SbiEpay::verify($paymentResponse);
+
+    expect($verification->isSuccess())->toBeTrue()
+        ->and($verification->orderId)->toBe('1234L6TDVXXB54')
+        ->and($verification->amount)->toBe(100.00);
+});
+
+it('verifies using raw decrypted callback string decData directly', function () {
+    $verificationUrl = SbiEpay::getVerificationUrl();
+
+    $liveSuccess = '1003947|2011578958428|SUCCESS|IN|INR|dept:Tax/bill:10|1234L6TDVXXB54|100.00|Completed Successfully|SBI|IG00FMKEX5|2026-10-30 12:00:00|NB|SBIEPAY|1003947|0.00^0.00';
+
+    Http::fake([
+        $verificationUrl => Http::response($liveSuccess, 200),
+    ]);
+
+    // Format from double-verification.php ($data[0] = orderId, $data[13] = merchantId, $data[3] = amount)
+    $decData = '1234L6TDVXXB54|SUCCESS|2011578958428|100.00|INR|Other|2026-10-30|NA|IG00FMKEX5|SBI|NA|NB|DOM|1003947';
+
+    $verification = SbiEpay::verify($decData);
+
+    expect($verification->isSuccess())->toBeTrue()
+        ->and($verification->orderId)->toBe('1234L6TDVXXB54')
+        ->and($verification->amount)->toBe(100.00);
+});
+
+it('handles gateway access denied / single string error response', function () {
+    $verificationUrl = SbiEpay::getVerificationUrl();
+
+    Http::fake([
+        $verificationUrl => Http::response('Access Denied, Please contact Administrator.', 200),
+    ]);
+
+    $verification = SbiEpay::verify('ORD_ERR_1', 100.00);
+
+    expect($verification->isSuccess())->toBeFalse()
+        ->and($verification->orderId)->toBe('ORD_ERR_1')
+        ->and($verification->status)->toBe('FAILED')
+        ->and($verification->message)->toBe('Access Denied, Please contact Administrator.');
 });

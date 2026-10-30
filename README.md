@@ -221,20 +221,44 @@ $response->toArray();             // array<string, mixed>
 
 ### 3. Server-to-Server Double Verification
 
-To eliminate any chance of client-side callback tampering, query SBI's Double Verification API directly from your server:
+To eliminate any chance of client-side callback tampering, query SBI's Double Verification API directly from your server. You can pass the `PaymentResponse` instance directly, or supply the `orderId` and `amount`, or even pass the raw decrypted `decData` string:
 
 ```php
 use SbiEpay\SbiEpay\Facades\SbiEpay;
 
+// Option A: Pass PaymentResponse instance directly
+$verification = SbiEpay::verify($response);
+
+// Option B: Pass order ID and amount
 $verification = SbiEpay::verify(
     orderId: 'ORDER_12345',
     amount: 1500.00
 );
 
+// Option C: Pass raw decrypted callback string (e.g. decData)
+$verification = SbiEpay::verify($decData);
+
 if ($verification->isSuccess()) {
     // Verified by SBI server
     $sbiRef = $verification->sbiTransactionId;
+    $amount = $verification->amount;
 }
+```
+
+#### Available Methods on `VerificationResponse`:
+
+```php
+$verification->isSuccess();           // bool: true if status is SUCCESS or SUCCESSFUL
+$verification->orderId;               // string: original merchant order ID
+$verification->status;                // string: 'SUCCESS', 'FAILED', 'NO RECORDS FOUND', etc.
+$verification->amount;                // float: verified transaction amount
+$verification->sbiTransactionId;      // ?string: SBI transaction reference ID (ATRN)
+$verification->merchantId;            // ?string: merchant ID
+$verification->message;               // ?string: status description or message
+$verification->otherDetails;          // ?string: other details
+$verification->userDetails;           // array<string, string>: parsed key-value user details
+$verification->rawResponse;           // string: raw response from SBI ePay
+$verification->toArray();             // array<string, mixed>
 ```
 
 ---

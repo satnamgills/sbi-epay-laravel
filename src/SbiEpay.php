@@ -6,6 +6,7 @@ namespace SbiEpay\SbiEpay;
 
 use Exception;
 use Illuminate\Support\Facades\Http;
+use InvalidArgumentException;
 use RuntimeException;
 use SbiEpay\SbiEpay\DTOs\PaymentInitiation;
 use SbiEpay\SbiEpay\DTOs\PaymentRequest;
@@ -160,25 +161,76 @@ class SbiEpay
     /**
      * Perform Double Verification with SBI ePay server.
      *
+     * @param  PaymentResponse|string  $orderId  Order ID, PaymentResponse instance, or raw decrypted callback payload.
+     * @param  float|int|string|null  $amount  Transaction amount (optional if passing PaymentResponse or decData).
+     * @param  string|null  $atrn  SBI Transaction ID / ATRN (optional).
+     * @param  string|null  $merchantId  Merchant ID (optional, overrides configured merchant ID).
+     *
      * @throws VerificationException
+     * @throws InvalidArgumentException
      */
-    public function verify(string $orderId, float|int|string $amount): VerificationResponse
-    {
-        $merchantId = $this->getMerchantId();
+    public function verify(
+        PaymentResponse|string $orderId,
+        float|int|string|null $amount = null,
+        ?string $atrn = null,
+        ?string $merchantId = null,
+    ): VerificationResponse {
+        if ($orderId instanceof PaymentResponse) {
+            $amount = $amount ?? $orderId->amount;
+            $atrn = $atrn ?? $orderId->sbiTransactionId;
+            $merchantId = $merchantId ?? $orderId->merchantId;
+            $orderId = $orderId->orderId;
+        } elseif (str_contains($orderId, '|')) {
+            $parsed = PaymentResponse::parse($orderId);
+            $amount = $amount ?? $parsed->amount;
+            $atrn = $atrn ?? $parsed->sbiTransactionId;
+            $merchantId = $merchantId ?? $parsed->merchantId;
+            $orderId = $parsed->orderId;
+        }
+
+        $resolvedMerchantId = ! empty($merchantId) ? (string) $merchantId : $this->getMerchantId();
+
+        if ($amount === null) {
+            throw new InvalidArgumentException('Transaction amount is required for verification.');
+        }
+
         $amountFloat = (float) $amount;
-        $amountFormatted = number_format($amountFloat, 2, '.', '');
+        $amountStr = is_string($amount) && trim($amount) !== ''
+            ? trim($amount)
+            : number_format($amountFloat, 2, '.', '');
 
         $url = $this->getVerificationUrl();
-        $queryRequest = "|{$merchantId}|{$orderId}|{$amountFormatted}";
+        $atrnPrefix = ($atrn !== null && $atrn !== '' && $atrn !== 'NA') ? $atrn : '';
+        $queryRequest = "{$atrnPrefix}|{$resolvedMerchantId}|{$orderId}|{$amountStr}";
 
+        $params = [
+            'queryRequest' => $queryRequest,
+            'aggregatorId' => $this->aggregatorId,
+            'merchantId' => $resolvedMerchantId,
+        ];
+
+        $body = $this->sendVerificationRequest($url, $params);
+
+        if ($body === '') {
+            throw VerificationException::emptyResponse();
+        }
+
+        return VerificationResponse::parse($body, $orderId, $amountFloat);
+    }
+
+    /**
+     * Send double verification request using Http client, falling back to native cURL for HTTP/0.9 support.
+     *
+     * @param  array<string, string>  $params
+     *
+     * @throws VerificationException
+     */
+    protected function sendVerificationRequest(string $url, array $params): string
+    {
         try {
             $response = Http::asForm()
                 ->timeout(60)
-                ->post($url, [
-                    'queryRequest' => $queryRequest,
-                    'aggregatorId' => $this->aggregatorId,
-                    'merchantId' => $merchantId,
-                ]);
+                ->post($url, $params);
 
             if ($response->failed()) {
                 throw VerificationException::requestFailed("HTTP status {$response->status()}");
@@ -186,18 +238,55 @@ class SbiEpay
 
             $body = trim($response->body());
 
-            if ($body === '') {
-                throw VerificationException::emptyResponse();
+            if ($body !== '') {
+                return $body;
             }
-
-            return VerificationResponse::parse($body, $orderId, $amountFloat);
         } catch (Exception $e) {
             if ($e instanceof VerificationException) {
                 throw $e;
             }
 
-            throw VerificationException::requestFailed($e->getMessage());
+            if (! function_exists('curl_init')) {
+                throw VerificationException::requestFailed($e->getMessage());
+            }
         }
+
+        return $this->sendViaCurl($url, $params);
+    }
+
+    /**
+     * Send request via native cURL with HTTP/0.9 allowed.
+     *
+     * @param  array<string, string>  $params
+     *
+     * @throws VerificationException
+     */
+    protected function sendViaCurl(string $url, array $params): string
+    {
+        $postData = http_build_query($params);
+
+        $ch = curl_init($url);
+
+        if (defined('CURLOPT_HTTP09_ALLOWED')) {
+            curl_setopt($ch, CURLOPT_HTTP09_ALLOWED, true);
+        }
+        curl_setopt($ch, CURLOPT_SSLVERSION, CURL_SSLVERSION_DEFAULT);
+        curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 60);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $postData);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+
+        $response = curl_exec($ch);
+        $curlError = curl_error($ch);
+        curl_close($ch);
+
+        if ($curlError !== '') {
+            throw VerificationException::requestFailed($curlError);
+        }
+
+        return trim((string) $response);
     }
 
     /**

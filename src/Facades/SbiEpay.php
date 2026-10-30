@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Facade;
 /**
  * @method static \SbiEpay\SbiEpay\DTOs\PaymentInitiation initiate(\SbiEpay\SbiEpay\DTOs\PaymentRequest|array<string, mixed> $request)
  * @method static \SbiEpay\SbiEpay\DTOs\PaymentResponse handleCallback(?string $encData)
- * @method static \SbiEpay\SbiEpay\DTOs\VerificationResponse verify(string $orderId, float|int|string $amount)
+ * @method static \SbiEpay\SbiEpay\DTOs\VerificationResponse verify(\SbiEpay\SbiEpay\DTOs\PaymentResponse|string $orderId, float|int|string|null $amount = null, ?string $atrn = null, ?string $merchantId = null)
  * @method static \SbiEpay\SbiEpay\SbiEpay merchant(string $merchantId, string $merchantKey)
  * @method static \SbiEpay\SbiEpay\SbiEpay account(?string $accountIdentifier)
  * @method static ?string getAccountIdentifier()

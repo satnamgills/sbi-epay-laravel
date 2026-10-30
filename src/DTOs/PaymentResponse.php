@@ -90,7 +90,7 @@ class PaymentResponse implements JsonSerializable
             $bankRef = isset($tokens[9]) && $tokens[9] !== '' ? trim($tokens[9]) : null;
             $date = isset($tokens[10]) && $tokens[10] !== '' ? trim($tokens[10]) : null;
             $cin = isset($tokens[12]) && $tokens[12] !== '' && $tokens[12] !== 'NA' ? trim($tokens[12]) : null;
-            $merchantId = null;
+            $merchantId = isset($tokens[13]) && $tokens[13] !== '' ? trim($tokens[13]) : null;
         }
 
         $userDetails = self::parseUserDetails($otherDetails);
